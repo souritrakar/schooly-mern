@@ -4,26 +4,47 @@ const bcrypt = require("bcrypt")
 
 let School =  require("../models/school.model")
 
-router.route('/').post( async (req, res)=>{
-   const school = req.body
 
-   const existingEmail  = School.findOne({email:school.email})
+async function hashPass(password){
+
+  return await bcrypt.hash(password, 10)
+}
+
+router.route('/add').post( async (req,res)=>{
    
-   if(existingEmail){
-      res.json({message:"Email already exists."})
-   }
-   else{
-      school.password = await bcrypt.hash(req.body.password, 10)
+   const schoolname = req.body.name
+   const email = req.body.email
+   const password = req.body.password
+ 
 
-      const dbSchool = new School({
-         schoolname: school.schoolname.toLowerCase(),
-         email:school.email.toLowerCase(),
-         password:school.password
-      })
+   var schoolEmailExists = School.findOne({email:email}).exec()
+   schoolEmailExists.then(function(doc){
+      if(doc){
+         res.json({message:"Already exists"})
+      }
 
-      dbSchool.save()
-      res.json({message:"Registration successful!"})
-   }
+      else{
+
+         
+         hashPass(password).then((hash)=>{
+        
+            const newSchool = new School({
+               schoolname:schoolname,
+               email:email,
+               password:hash
+            })
+
+     
+         
+            newSchool.save()
+            .then(()=>res.json({message:"Registration completed successfully!"}))
+            .catch(err=>res.json({message:err}))
+         })
+
+        
+        
+      }
+   })
 })
 
 

@@ -6,24 +6,27 @@ const schoolSchema = new Schema(
     
     {
     
-        schoolname: {
-        type:"String",
-        required:true,
-        minlength:5,
-        trim:true
+        schoolname:{
+
+          type:"String",
+          required:true
+        
+     
+      
     },
 
     email:{
         type:"String",
-        required:true,
-        trim:true
+        required:true
+       
     },
 
     password:{
-
         type:"String",
-        required:"true",
-        minlength:5
+        required:true
+      
+
+    
     }
 
 
